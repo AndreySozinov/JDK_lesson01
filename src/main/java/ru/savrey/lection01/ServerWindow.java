@@ -57,7 +57,7 @@ public class ServerWindow extends JFrame{
                 } else {
                     isServerWorking = false;
                     log.append("Server stopped\n");
-                    try(FileWriter writer = new FileWriter("logs.txt", true)) {
+                    try(FileWriter writer = new FileWriter("logs.txt", false)) {
                         writer.write(String.valueOf(log.getText()));
                         writer.flush();
                     } catch (IOException ex) {
