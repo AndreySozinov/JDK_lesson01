@@ -4,6 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class ServerWindow extends JFrame{
     private static final int POS_X = 500;
@@ -18,23 +22,52 @@ public class ServerWindow extends JFrame{
 
     ServerWindow() {
         isServerWorking = false;
-        btnStop.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isServerWorking = false;
-                System.out.printf("Server stopped " + isServerWorking + "\n");
-                log.append("Server stopped " + isServerWorking + "\n");
-            }
-        });
 
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                isServerWorking = true;
-                System.out.printf("Server started " + isServerWorking + "\n");
-                log.append("Server started " + isServerWorking + "\n");
+                if (isServerWorking) {
+                    log.append("Server already working\n");
+                } else {
+                    isServerWorking = true;
+                    log.append("Server started\n");
+                    try(FileReader reader = new FileReader("logs.txt"))
+                    {
+                        char[] buf = new char[256];
+                        int c;
+                        while ((c = reader.read(buf)) > 0) {
+                            if (c < 256) {
+                                buf = Arrays.copyOf(buf, c);
+                            }
+                            log.append(String.valueOf(buf));
+                        }
+                    }
+                    catch (IOException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
             }
         });
+
+        btnStop.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!isServerWorking) {
+                    log.append("Server not working\n");
+                } else {
+                    isServerWorking = false;
+                    log.append("Server stopped\n");
+                    try(FileWriter writer = new FileWriter("logs.txt", true)) {
+                        writer.write(String.valueOf(log.getText()));
+                        writer.flush();
+                    } catch (IOException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                    log.setText("");
+                }
+            }
+        });
+
         log.setEditable(false);
         JScrollPane scrolling = new JScrollPane(log);
 
@@ -50,5 +83,14 @@ public class ServerWindow extends JFrame{
         add(scrolling);
 
         setVisible(true);
+    }
+
+    void incomingMessage(String message) {
+        log.append(message);
+    }
+
+    String connectUser(String username) {
+        log.append(username + " присоединился\n");
+        return log.getText();
     }
 }

@@ -2,6 +2,8 @@ package ru.savrey.lection01;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ClientGUI extends JFrame {
     private static final int WIDTH = 400;
@@ -20,11 +22,24 @@ public class ClientGUI extends JFrame {
     private final JTextField tfMessage = new JTextField();
     private final JButton btnSend = new JButton("Send");
 
+    ServerWindow server;
+
     ClientGUI() {
+        server = new ServerWindow();
+        
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(WIDTH, HEIGHT);
         setTitle("Chat Client");
+
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                log.append("Установлено соединение с сервером");
+                String history = server.connectUser(tfLogin.getText());
+                log.append(history);
+            }
+        });
 
         panelTop.add(tfLogin);
         panelTop.add(tfIPAddress);
@@ -32,6 +47,17 @@ public class ClientGUI extends JFrame {
         panelTop.add(tfPassword);
         panelTop.add(btnLogin);
         add(panelTop, BorderLayout.NORTH);
+
+        btnSend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String message = String.format("%s -> %s\n", tfLogin.getText(), tfMessage.getText());
+                log.append(message);
+                server.incomingMessage(message);
+                tfMessage.setText("");
+            }
+        });
+
 
         panelBottom.add(tfMessage, BorderLayout.CENTER);
         panelBottom.add(btnSend, BorderLayout.EAST);

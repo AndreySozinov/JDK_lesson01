@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 public class SettingsWindow extends JFrame{
     private static final int WINDOW_HEIGHT = 350;
     private static final int WINDOW_WIDTH = 350;
+    private static final int WIN_POS_X = 880;
+    private static final int WIN_POS_Y = 405;
     private static final String FIELD_SIZE_PREFIX = "Установленный размер поля: ";
     private static final int MIN_FIELD_SIZE = 3;
     private static final int MAX_FIELD_SIZE = 10;
@@ -19,7 +21,7 @@ public class SettingsWindow extends JFrame{
     JButton btnStart = new JButton("Start new game");
     SettingsWindow(GameWindow gameWindow) {
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        setLocationRelativeTo(gameWindow);
+        setLocation(WIN_POS_X, WIN_POS_Y);
 
         setLayout(new GridLayout(10, 1));
         add(new JLabel("Выберите режим игры"));

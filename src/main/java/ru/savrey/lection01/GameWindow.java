@@ -26,7 +26,6 @@ public class GameWindow extends JFrame {
 
         map = new Map();
         settings = new SettingsWindow(this);
-        settings.setVisible(true);
 
         btnExit.addActionListener(new ActionListener() {
             @Override
